@@ -1,0 +1,15 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title
+    <b>C4 контекстная диаграмма</b>
+end title
+
+Person(user, "Пользователь", "Пользователь сервиса")
+
+System(task_tracker, "Трекер задач", "Сервис с веб-интерфейсом")
+
+Rel(user, task_tracker, "Создаёт, обновляет, удаляет или даёт комментарий к задаче")
+
+@enduml
