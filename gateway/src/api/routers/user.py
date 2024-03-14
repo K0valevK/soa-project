@@ -2,18 +2,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_db_session
 from src.crud.user import get_user, create_user, fill_info
 from src.schemas.user import User, UserCreate, UserUpdate
-from src.api.auth.auth_handler import signJWT
-from fastapi import APIRouter, Depends, HTTPException
+from src.schemas.token import Token, DataToken
+from src.api.auth.oauth import oauth2_scheme
+from src.api.auth.oauth import create_token
+from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 import hashlib
 
 router = APIRouter(
     prefix="/users",
     tags=["users"],
-    responses={404: {"description": "Not found"}},
 )
 
 
-@router.post("/sign_up", response_model=User)
+@router.post("/signup", response_model=User)
 async def new_user(user: UserCreate, db: AsyncSession = Depends(get_db_session)):
     db_user = await get_user(db, user.login)
     if db_user:
@@ -37,9 +40,15 @@ async def user_details(user_login: str, db: AsyncSession = Depends(get_db_sessio
 '''
 
 
-# TODO: Ещё поломан
-@router.post("/login")
-async def login(user: UserCreate, db: AsyncSession = Depends(get_db_session)):
-    db_user = await get_user(db, user.login)
-    if db_user.login == user.login and db_user.password == hashlib.md5(user.password.encode()).hexdigest():
-        return signJWT(user.login)
+@router.post("/login", response_model=Token)
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: AsyncSession = Depends(get_db_session)):
+    db_user = await get_user(db, form_data.username)
+
+    if db_user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='The user does not exist')
+
+    if hashlib.md5(form_data.password.encode()).hexdigest() != db_user.password:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid password')
+
+    access_token: str = create_token(data={'login': db_user.login})
+    return Token(access_token=access_token, token_type='bearer')
