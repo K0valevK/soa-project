@@ -1,13 +1,13 @@
-from src.models import User as UserDBModel
-from src.schemas import UserCreate as UserCreateDBSchema
-from src.schemas import UserUpdate as UserUpdateDBSchema
+from api.auth.oauth import get_password_hash
+from models import User as UserDBModel
+from schemas import UserCreate as UserCreateDBSchema
+from schemas import UserUpdate as UserUpdateDBSchema
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-import hashlib
 
 
 async def create_user(db: AsyncSession, user: UserCreateDBSchema):
-    hashed_password = hashlib.md5(user.password.encode()).hexdigest()
+    hashed_password = get_password_hash(user.password)
     db_user = UserDBModel(login=user.login, password=hashed_password)
     db.add(db_user)
     await db.commit()

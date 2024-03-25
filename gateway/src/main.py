@@ -1,14 +1,10 @@
-import logging
-import sys
 from contextlib import asynccontextmanager
 
 import uvicorn
-from src.api.routers.user import router as users_router
-from src.config import settings
-from src.database import sessionmanager
+from api import routers
+from config import settings
+from database import sessionmanager
 from fastapi import FastAPI
-
-# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG if settings.debug_logs else logging.INFO)
 
 
 @asynccontextmanager
@@ -31,8 +27,9 @@ async def root():
 
 
 # Routers
-app.include_router(users_router)
+app.include_router(routers.user_router)
+app.include_router(routers.auth_router)
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8000)
+    uvicorn.run("main:app", host=settings.me_host, reload=True, port=settings.me_port)

@@ -1,40 +1,44 @@
-version: "3.7"
+version: "3"
+
 services:
-  postgres:
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: dev-user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: user
-    ports:
-      - 5432:5432
-    expose:
-      - "5432"
+  postgresql:
+    extends:
+      file: tools/database-dev/docker-compose.yml
+      service: postgresql
 
-  backend:
-    build:
-      context: gateway
-      dockerfile: Dockerfile
-    command: python src/main.py
-    tty: true
-    environment:
-      PYTHONPATH: .
-      DATABASE_URL: "postgresql+asyncpg://dev-user:password@postgres:5432/user"
-    depends_on:
-      - "postgres"
-    ports:
-      - 8000:8000
+  pgadmin:
+    extends:
+      file: tools/database-dev/docker-compose.yml
+      service: pgadmin
 
-  liquibase:
+  migrations_gateway:
+    container_name: "migrations_gateway"
     image: liquibase/liquibase:4.19.0
-    container_name: liquibase
+    command: --defaultsFile=/app/liquibase.properties update
     depends_on:
-      - "postgres"
+      postgresql:
+        condition: service_healthy
     volumes:
       - ./gateway/migrations:/app
-    command: --defaults-file=/app/liquibase.properties update
+    networks:
+      - tracker-network
 
-volumes:
-  db-data:
-  test-db-data:
+  gateway:
+    container_name: "gateway"
+    build:
+      context: .
+      dockerfile: gateway/src/Dockerfile
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      migrations_gateway:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    networks:
+      - tracker-network
+
+networks:
+  tracker-network:
+    name: "tracker-network"
