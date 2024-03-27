@@ -29,6 +29,7 @@ async def root():
 # Routers
 app.include_router(routers.user_router)
 app.include_router(routers.auth_router)
+app.include_router(routers.task_router)
 
 
 if __name__ == "__main__":

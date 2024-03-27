@@ -23,6 +23,18 @@ services:
     networks:
       - tracker-network
 
+  migrations_tm:
+    container_name: "migrations_tm"
+    image: liquibase/liquibase:4.19.0
+    command: --defaultsFile=/app/liquibase.properties update
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    volumes:
+      - ./task_manager/migrations:/app
+    networks:
+      - tracker-network
+
   gateway:
     container_name: "gateway"
     build:
@@ -36,6 +48,22 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    networks:
+      - tracker-network
+
+  task_manger:
+    container_name: "task_manager"
+    build:
+      context: .
+      dockerfile: task_manager/src/Dockerfile
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      migrations_tm:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
     networks:
       - tracker-network
 
