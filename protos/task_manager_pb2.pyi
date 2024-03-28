@@ -97,15 +97,17 @@ class GetTaskResponse(_message.Message):
     def __init__(self, status_code: _Optional[int] = ..., task: _Optional[_Union[Task, _Mapping]] = ...) -> None: ...
 
 class ListTasksRequest(_message.Message):
-    __slots__ = ("page_token",)
-    PAGE_TOKEN_FIELD_NUMBER: _ClassVar[int]
-    page_token: str
-    def __init__(self, page_token: _Optional[str] = ...) -> None: ...
+    __slots__ = ("page", "limit")
+    PAGE_FIELD_NUMBER: _ClassVar[int]
+    LIMIT_FIELD_NUMBER: _ClassVar[int]
+    page: int
+    limit: int
+    def __init__(self, page: _Optional[int] = ..., limit: _Optional[int] = ...) -> None: ...
 
 class ListTasksResponse(_message.Message):
-    __slots__ = ("tasks", "next_page_token")
+    __slots__ = ("status_code", "tasks")
+    STATUS_CODE_FIELD_NUMBER: _ClassVar[int]
     TASKS_FIELD_NUMBER: _ClassVar[int]
-    NEXT_PAGE_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    status_code: int
     tasks: _containers.RepeatedCompositeFieldContainer[Task]
-    next_page_token: str
-    def __init__(self, tasks: _Optional[_Iterable[_Union[Task, _Mapping]]] = ..., next_page_token: _Optional[str] = ...) -> None: ...
+    def __init__(self, status_code: _Optional[int] = ..., tasks: _Optional[_Iterable[_Union[Task, _Mapping]]] = ...) -> None: ...

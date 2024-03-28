@@ -10,8 +10,7 @@ from jose import jwt, JWTError
 from typing import Annotated
 
 from protos.task_manager_pb2_grpc import TaskManagerServerStub
-from protos.task_manager_pb2 import CreateUserRequest, CreateTaskResponse
-from google.protobuf.json_format import MessageToDict
+from protos.task_manager_pb2 import CreateUserRequest
 
 router = APIRouter(
     prefix="/users",

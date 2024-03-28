@@ -61,12 +61,13 @@ message GetTaskResponse {
 }
 
 message ListTasksRequest {
-    string page_token = 1;
+    int32 page = 1;
+    int32 limit = 2;
 }
 
 message ListTasksResponse {
-    repeated Task tasks = 1;
-    string next_page_token = 2;
+    int32 status_code = 1;
+    repeated Task tasks = 2;
 }
 
 service TaskManagerServer {
