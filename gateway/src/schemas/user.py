@@ -19,6 +19,10 @@ class UserUpdate(UserBase):
     phone_num: Optional[str] = None
 
 
+class UserResponse(UserUpdate):
+    login: str
+
+
 class User(UserCreate):
     id: int
     first_name: str

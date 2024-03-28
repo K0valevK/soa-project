@@ -1,0 +1,21 @@
+@startuml
+
+skinparam linetype ortho
+
+entity user {
+    * id: int <<generated>>
+    --
+    * login: varchar
+}
+
+entity task {
+    * id: int <<generated>>
+    --
+    * creator_login: varchar <<FK>>
+    * like_num: int
+    * view_num: int
+}
+
+user ||-|{ task
+
+@enduml

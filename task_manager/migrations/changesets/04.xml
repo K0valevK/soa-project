@@ -1,0 +1,25 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet author="k.kovalev" id="create-index-task">
+        <createIndex indexName="login_index" tableName="user">
+            <column name="login" />
+        </createIndex>
+
+        <createIndex indexName="creator_login_index" tableName="task" >
+            <column name="creator_login" />
+        </createIndex>
+
+        <createIndex indexName="creator_log_index" tableName="comment" >
+            <column name="creator_login" />
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

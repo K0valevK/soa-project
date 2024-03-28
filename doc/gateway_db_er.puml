@@ -1,0 +1,15 @@
+@startuml
+
+entity user {
+    * id: int <<generated>>
+    --
+    * login: varchar
+    * password: varchar
+    first_name: varchar
+    last_name: varchar
+    birth_date: varchar
+    email: varchar
+    phone_num: varchar
+}
+
+@enduml
