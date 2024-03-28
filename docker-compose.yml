@@ -1,0 +1,40 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: dev-user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: user
+    ports:
+      - 5432:5432
+    expose:
+      - "5432"
+
+  backend:
+    build:
+      context: gateway
+      dockerfile: Dockerfile
+    command: python src/main.py
+    tty: true
+    environment:
+      PYTHONPATH: .
+      DATABASE_URL: "postgresql+asyncpg://dev-user:password@postgres:5432/user"
+    depends_on:
+      - "postgres"
+    ports:
+      - 8000:8000
+
+  liquibase:
+    image: liquibase/liquibase:4.19.0
+    container_name: liquibase
+    depends_on:
+      - "postgres"
+    volumes:
+      - ./gateway/migrations:/app
+    command: --defaults-file=/app/liquibase.properties update
+
+volumes:
+  db-data:
+  test-db-data:

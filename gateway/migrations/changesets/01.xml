@@ -1,0 +1,33 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet author="k.kovalev" id="create-user-table">
+        <createTable tableName="user">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_pkey"/>
+            </column>
+
+            <column name="login" type="VARCHAR" />
+
+            <column name="password" type="VARCHAR" defaultValue="" />
+
+            <column name="first_name" type="VARCHAR" defaultValue="" />
+
+            <column name="last_name" type="VARCHAR" defaultValue="" />
+
+            <column name="birth_date" type="VARCHAR" defaultValue="" />
+
+            <column name="email" type="VARCHAR" defaultValue="" />
+
+            <column name="phone_num" type="VARCHAR" defaultValue="" />
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
