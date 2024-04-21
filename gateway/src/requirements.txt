@@ -1,6 +1,9 @@
 alembic==1.11.1
 Authlib==1.2.0
 fastapi==0.105.0
+grpcio==1.62.1
+grpcio-tools==1.62.0
+grpclib==0.4.6
 httpx==0.24.1
 ipython==8.14.0
 itsdangerous==2.1.2
