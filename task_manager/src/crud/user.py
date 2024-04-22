@@ -1,5 +1,6 @@
 from database import sessionmanager
 from models import User as UserDBModel
+from models.user import toUserSchema
 from schemas import UserCreate as UserCreateDBSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,4 +11,4 @@ async def create_user(user: UserCreateDBSchema):
         db.add(db_user)
         await db.commit()
         await db.refresh(db_user)
-    return 200
+    return toUserSchema(db_user)

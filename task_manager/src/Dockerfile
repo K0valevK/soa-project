@@ -9,6 +9,6 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 
 ENV PYTHONPATH=/app
-ENV DATABASE_URL="postgresql+asyncpg://postgres:postgres@postgresql:5432/task_manager"
+ENV DATABASE_URL="postgresql+asyncpg://postgres:postgres@postgresql_taskm:5432/task_manager"
 
 ENTRYPOINT ["python", "src/main.py"]

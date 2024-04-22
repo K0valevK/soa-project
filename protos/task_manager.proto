@@ -4,16 +4,21 @@ import "google/protobuf/empty.proto";
 
 package task_grpc;
 
+message User {
+    uint64 id = 1;
+    string login = 2;
+}
+
 message CreateUserRequest {
     string login = 1;
 }
 
 message CreateUserResponse {
-    int32 status_code = 1;
+    User user = 1;
 }
 
 message Task {
-    int32 id = 1;
+    uint64 id = 1;
     string creator_login = 2;
     string name = 3;
     string text = 4;
@@ -26,38 +31,35 @@ message CreateTaskRequest {
 }
 
 message CreateTaskResponse {
-    int32 status_code = 1;
-    Task task = 2;
+    Task task = 1;
 }
 
 message UpdateTaskRequest {
-    string old_name = 1;
+    uint64 id = 1;
     string creator_login = 2;
     string new_name = 3;
     string text = 4;
 }
 
 message UpdateTaskResponse {
-    int32 status_code = 1;
-    Task task = 2;
+    Task task = 1;
 }
 
 message DeleteTaskRequest {
     string creator_login = 1;
-    string name = 2;
+    uint64 task_id = 2;
 }
 
 message DeleteTaskResponse {
-    int32 status_code = 1;
+    Task task = 1;
 }
 
 message GetTaskRequest {
-    int32 id = 1;
+    uint64 id = 1;
 }
 
 message GetTaskResponse {
-    int32 status_code = 1;
-    Task task = 2;
+    Task task = 1;
 }
 
 message ListTasksRequest {
@@ -66,8 +68,7 @@ message ListTasksRequest {
 }
 
 message ListTasksResponse {
-    int32 status_code = 1;
-    repeated Task tasks = 2;
+    repeated Task tasks = 1;
 }
 
 service TaskManagerServer {

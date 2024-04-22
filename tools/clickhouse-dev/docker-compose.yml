@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  clickhouse:
+    image: yandex/clickhouse-server:22.1
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./config.xml:/etc/clickhouse-server/config.d/config.xml
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tracker-network
+
+networks:
+  tracker-network:
+    name: "tracker-network"
