@@ -2,6 +2,7 @@ import grpc
 from aiokafka import AIOKafkaProducer
 from api.routers.user import get_current_user
 from config import settings
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from google.protobuf.json_format import MessageToDict
 from grpc_client import get_stub
@@ -110,6 +111,7 @@ async def view_task(task_id: int,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
     await send_message(producer, settings.kafka_topic_views, {"user_login": current_user.login,
+                                                              "timestamp": int(round(datetime.now().timestamp())),
                                                               "task_id": task_id})
 
 
@@ -125,4 +127,5 @@ async def like_task(task_id: int,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
     await send_message(producer, settings.kafka_topic_likes, {"user_login": current_user.login,
+                                                              "timestamp": int(round(datetime.now().timestamp())),
                                                               "task_id": task_id})
