@@ -99,7 +99,7 @@ async def get_tasks_paginated(page: int,
     return result
 
 
-@router.get("/{task_id}/view")
+@router.post("/{task_id}/view")
 async def view_task(task_id: int,
                     current_user: User = Depends(get_current_user),
                     stub: TaskManagerServerStub = Depends(get_stub),
@@ -108,14 +108,15 @@ async def view_task(task_id: int,
     try:
         resp = await stub.GetTask(task_req)
     except grpc.RpcError as rpc_error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     await send_message(producer, settings.kafka_topic_views, {"user_login": current_user.login,
                                                               "timestamp": int(round(datetime.now().timestamp())),
-                                                              "task_id": task_id})
+                                                              "task_id": task_id,
+                                                              "author": resp.task.creator_login})
 
 
-@router.get("/{task_id}/like")
+@router.post("/{task_id}/like")
 async def like_task(task_id: int,
                     current_user: User = Depends(get_current_user),
                     stub: TaskManagerServerStub = Depends(get_stub),
@@ -124,8 +125,9 @@ async def like_task(task_id: int,
     try:
         resp = await stub.GetTask(task_req)
     except grpc.RpcError as rpc_error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     await send_message(producer, settings.kafka_topic_likes, {"user_login": current_user.login,
                                                               "timestamp": int(round(datetime.now().timestamp())),
-                                                              "task_id": task_id})
+                                                              "task_id": task_id,
+                                                              "author": resp.task.creator_login})

@@ -7,10 +7,6 @@
     <list default="true" id="6ac6434e-21b2-43c9-b9a9-3df4dbbc7949" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/soa-project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/soa-project.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/api/routers/task.py" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/api/routers/task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/statistics/src/kafka_wrappers/likes.py" beforeDir="false" afterPath="$PROJECT_DIR$/statistics/src/kafka_wrappers/likes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/statistics/src/kafka_wrappers/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/statistics/src/kafka_wrappers/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/clickhouse-dev/init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/tools/clickhouse-dev/init.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
