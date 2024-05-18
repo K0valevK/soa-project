@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     me_port: int = 8000
     tm_host: str = "localhost"
     tm_port: int = 8001
+    kafka_host: str = "localhost"
+    kafka_port: int = 9092
+    kafka_topic_views: str = "views"
+    kafka_topic_likes: str = "likes"
 
 
 settings = Settings()

@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  postgresql:
+    container_name: "postgresql_taskm"
+    image: postgres:15.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: task_manager
+    ports:
+      - "5433:5432"
+    networks:
+      - tracker-network
+    volumes:
+      - ./configs/create-multiple-db-with-users.sh:/docker-entrypoint-initdb.d/create-multiple-db-with-users.sh:ro
+    healthcheck:
+      test: "pg_isready -U postgres"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  tracker-network:
+    name: "tracker-network"

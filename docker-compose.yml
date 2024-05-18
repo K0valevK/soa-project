@@ -1,22 +1,22 @@
 version: "3"
 
 services:
-  postgresql:
+  postgresql_gateway:
     extends:
-      file: tools/database-dev/docker-compose.yml
+      file: tools/gateway-database-dev/docker-compose.yml
       service: postgresql
 
-  pgadmin:
+  postgresql_taskm:
     extends:
-      file: tools/database-dev/docker-compose.yml
-      service: pgadmin
+      file: tools/taskm-database-dev/docker-compose.yml
+      service: postgresql
 
   migrations_gateway:
     container_name: "migrations_gateway"
     image: liquibase/liquibase:4.19.0
     command: --defaultsFile=/app/liquibase.properties update
     depends_on:
-      postgresql:
+      postgresql_gateway:
         condition: service_healthy
     volumes:
       - ./gateway/migrations:/app
@@ -28,12 +28,57 @@ services:
     image: liquibase/liquibase:4.19.0
     command: --defaultsFile=/app/liquibase.properties update
     depends_on:
-      postgresql:
+      postgresql_taskm:
         condition: service_healthy
     volumes:
       - ./task_manager/migrations:/app
     networks:
       - tracker-network
+
+  kafka:
+    extends:
+      file: tools/kafka-dev/docker-compose.yml
+      service: kafka
+
+  kafka-ui:
+    container_name: "kafka-ui"
+    image: provectuslabs/kafka-ui
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: 'local'
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka:29092'
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    ports:
+      - "8081:8080"
+    networks:
+      - tracker-network
+
+  init-kafka:
+    container_name: "init-kafka"
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on:
+      - kafka
+    networks:
+      - tracker-network
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka:29092 --list
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic views --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic likes --replication-factor 1 --partitions 1
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:29092 --list
+      "
+
+  clickhouse:
+    extends:
+      file: tools/clickhouse-dev/docker-compose.yml
+      service: clickhouse
 
   gateway:
     container_name: "gateway"
@@ -41,9 +86,13 @@ services:
       context: .
       dockerfile: gateway/src/Dockerfile
     depends_on:
-      postgresql:
+      postgresql_gateway:
         condition: service_healthy
       migrations_gateway:
+        condition: service_completed_successfully
+      kafka:
+        condition: service_started
+      init-kafka:
         condition: service_completed_successfully
     restart: unless-stopped
     ports:
@@ -57,13 +106,28 @@ services:
       context: .
       dockerfile: task_manager/src/Dockerfile
     depends_on:
-      postgresql:
+      postgresql_taskm:
         condition: service_healthy
       migrations_tm:
         condition: service_completed_successfully
     restart: unless-stopped
     ports:
       - "8001:8001"
+    networks:
+      - tracker-network
+
+  statistics:
+    container_name: "statistics"
+    build:
+      context: .
+      dockerfile: statistics/src/Dockerfile
+    depends_on:
+      kafka:
+        condition: service_started
+      init-kafka:
+        condition: service_completed_successfully
+      clickhouse:
+        condition: service_started
     networks:
       - tracker-network
 
