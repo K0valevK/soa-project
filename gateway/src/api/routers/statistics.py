@@ -2,12 +2,14 @@ import grpc
 from config import settings
 from fastapi import APIRouter, Depends, HTTPException, status
 from google.protobuf.json_format import MessageToDict
-from grpc_client import get_stats_stub
+from grpc_client import get_stats_stub, get_stub
 from jose import jwt, JWTError
 from typing import List
 
 from protos.statistics_pb2_grpc import StatisticsServerStub
 from protos.statistics_pb2 import GetStatsOneRequest, GetTopTasksRequest, google_dot_protobuf_dot_empty__pb2
+from protos.task_manager_pb2_grpc import TaskManagerServerStub
+from protos.task_manager_pb2 import GetTaskRequest
 
 
 router = APIRouter(
@@ -18,14 +20,21 @@ router = APIRouter(
 
 @router.get("/{task_id}")
 async def task_stats(task_id: int,
+                     check_stub: TaskManagerServerStub = Depends(get_stub),
                      stub: StatisticsServerStub = Depends(get_stats_stub)):
-    # TODO: Foolproof request
+
+    task_req: GetTaskRequest = GetTaskRequest(id=task_id)
+    try:
+        resp = await check_stub.GetTask(task_req)
+    except grpc.RpcError as rpc_error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
     stats_req: GetStatsOneRequest = GetStatsOneRequest(task_id=task_id)
 
     try:
         resp = await stub.GetStatsOne(stats_req)
     except grpc.RpcError as rpc_error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return {"task_id": resp.task_id, "views_num": resp.views_num, "likes_num": resp.likes_num}
 
 

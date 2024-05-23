@@ -64,7 +64,7 @@ async def delete_task(task_id: int,
     try:
         resp = await stub.DeleteTask(task_req)
     except grpc.RpcError as rpc_error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return Task(id=resp.task.id,
                 creator_login=resp.task.creator_login,
                 name=resp.task.name,
@@ -78,7 +78,7 @@ async def get_task(task_id: int,
     try:
         resp = await stub.GetTask(task_req)
     except grpc.RpcError as rpc_error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return Task(id=resp.task.id,
                 creator_login=resp.task.creator_login,
                 name=resp.task.name,
