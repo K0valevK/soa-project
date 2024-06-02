@@ -1,6 +1,7 @@
 FROM python:3.11.4
 
 COPY statistics/src/ /app/src/
+COPY protos/ /app/protos
 COPY statistics/src/requirements.txt /app/
 
 WORKDIR /app

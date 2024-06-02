@@ -3,8 +3,8 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     project_name: str = "My FastAPI project"
-    me_host: str = "localhost"
-    me_port: int = 8001
+    me_host: str = "0.0.0.0"
+    me_port: int = 8002
     kafka_host: str = "localhost"
     kafka_port: int = 9092
     kafka_topic_likes: str = "likes"

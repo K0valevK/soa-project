@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     me_port: int = 8000
     tm_host: str = "localhost"
     tm_port: int = 8001
+    statistics_host: str = "localhost"
+    statistics_port: int = 8002
     kafka_host: str = "localhost"
     kafka_port: int = 9092
     kafka_topic_views: str = "views"

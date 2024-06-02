@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package statistics_grpc;
+
+message Task {
+    uint64 id = 1;
+    string author_login = 2;
+    uint64 metric = 3;
+}
+
+message User {
+    string login = 1;
+    uint64 likes = 2;
+}
+
+message GetStatsOneRequest {
+    uint64 task_id = 1;
+}
+
+message GetStatsOneResponse {
+    uint64 task_id = 1;
+    uint64 views_num = 2;
+    uint64 likes_num = 3;
+}
+
+message GetTopTasksRequest {
+    string type = 1;
+}
+
+message GetTopTasksResponse {
+    repeated Task tasks = 1;
+}
+
+message GetTopUsersResponse {
+    repeated User users = 1;
+}
+
+service StatisticsServer {
+    rpc GetStatsOne (GetStatsOneRequest) returns (GetStatsOneResponse) {}
+    rpc GetTopTasks (GetTopTasksRequest) returns (GetTopTasksResponse) {}
+    rpc GetTopUsers (google.protobuf.Empty) returns (GetTopUsersResponse) {}
+}
